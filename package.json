@@ -1,12 +1,13 @@
 {
-  "name": "node-js-getting-started",
+  "name": "school-search",
   "version": "0.1.5",
-  "description": "A sample Node.js app using Express 4",
+  "description": "search about school information",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
   "dependencies": {
+    "twitter-node-client": "0.0.6",
     "ejs": "2.3.3",
     "express": "4.13.3"
   },
@@ -15,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/heroku/node-js-getting-started"
+    "url": "https://github.com/nagahat/school_search"
   },
   "keywords": [
     "node",

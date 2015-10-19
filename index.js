@@ -10,7 +10,36 @@ var http = require('http'),
     url = require('url'),
     path = require('path'),
     fs = require('fs'),
+    Twitter = require('twitter-node-client').Twitter,
     ejs = require('ejs');
+
+/* twitter api */
+//Get this data from your twitter apps dashboard
+var config = {
+    "consumerKey": process.env.CONSUMER_KEY,
+    "consumerSecret": process.env.CONSUMER_SECRET,
+    "accessToken": process.env.ACCESS_TOKEN,
+    "accessTokenSecret": process.env.ACCESS_TOKEN_SECRET,
+    "callBackUrl": "https://school-search.herokuapp.com"
+}
+
+//Callback functions
+var error = function (err, response, body) {
+    console.log('ERROR [%s]', err);
+};
+var success = function (data) {
+    //console.log('Data [%s]', data);
+
+    var json = JSON.parse(data);
+    var result = json['statuses'][0];
+    console.log(result['user']['name']);
+    console.log(result['text']);
+    console.log(result['created_at']);
+};
+
+var twitter = new Twitter(config);
+twitter.getSearch({'q':'#haiku','count': 1}, error, success);
+/* twitter api end */
 
 // データファイルの読み込み
 var logs = [];
