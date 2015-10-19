@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Bootstrap -->
+        <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <title>一行掲示板</title>
+    </head>
+    <body>
+        <div id="header" class="container" style="background:red;">header</div>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-3" style="background:green;">left</div>
+                <div class="col-sm-6" style="background:pink;">
+                    <div class="container" style="padding:20px 0">
+                        <form class="form-inline" id="cmt_fm">
+                            <div class="form-group">
+                                <label class="sr-only control-label">発言</label>
+                                <input type="text" id="name" class="form-control" placeholder="名前">
+                                <input type="text" id="msg" class="form-control" placeholder="コメント">
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" value="submit" class="btn btn-primary">
+                                <!--<button id="send_btn">submit</button>-->
+                            </div>
+                        </form>
+                    </div>
+                    <hr>
+                    <div id="list"></div>
+                </div>
+                <div class="col-sm-3" style="background:orange;">right</div>
+            </div>
+        </div>
+        <div id="footer" class="container" style="background:blue;">footer</div>
+        <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+        <script src="bootstrap/js/bootstrap.min.js"></script>
+        <script>
+$(function() {
+    $("#cmt_fm").on("submit", function() {
+        // HTMLでの送信をキャンセル
+        event.preventDefault();
+        sendMsg();
+    });
+
+    showBody();
+    function sendMsg() {
+        console.log($("#name").val())
+            $.get('api', {
+                mode: "send",
+                name: $("#name").val(),
+                msg: $("#msg").val()
+            }, function() {
+                $("#msg").val("");
+                showBody();
+            });
+    }
+
+    function showBody() {
+        // サーバーからログの一覧を取得する
+        $.get('api', {
+            mode: "show",
+            name: $("#name").val(),
+            msg: $("#msg").val()
+        }, function(data) {
+            // データ(JSON)をJavaScriptのオブジェクトに変換
+            data = JSON.parse(data);
+            var html = "";
+            // ログの一覧を元にHTMLを構築
+            for (var i in data.items) {
+                var x = data.items[i];
+                html += "<p>" + esc(x[0]) + ": " + esc(x[1]) + "</p>";
+            }
+
+            // 画面に表示
+            $("#list").html(html);
+        })
+    }
+
+    // HTMLのエスケープを行う
+    function esc(s) {
+        return s.replace(/\&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+    }
+});
+        </script>
+    </body>
+</html>
+
