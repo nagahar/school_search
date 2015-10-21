@@ -39,10 +39,10 @@ var success = function (data) {
         console.log(result['created_at']);
     }
 };
-
-var twitter = new Twitter(config);
 twitter.getSearch({'q':'多摩川小学校', 'result_type':'mixed', 'count':count }, error, success);
 */
+
+var twitter = new Twitter(config);
 
 // データファイルの読み込み
 var logs = [];
