@@ -92,8 +92,7 @@ function procAPI(x, res) {
         res.write("{'result':'ok'}");
         res.end();
     } else if (q.mode == "show") {
-        //https://twitter.com/search?src=typd&q=多摩川小学校
-        twitter.getSearch({'q': q.msg, 'count': 10},
+        twitter.getSearch({'q': q.msg, 'count': 10, 'lang': 'ja'},
                 function (err, response, body) {
                     console.log('ERROR [%s]', err)
                         var o = {};
