@@ -1,5 +1,5 @@
 //------------------------------------------
-// 一行掲示板
+// 小学校検索
 //------------------------------------------
 // 設定
 var HTTP_PORT = (process.env.PORT || 5000);
@@ -24,22 +24,25 @@ var config = {
 }
 
 //Callback functions
+/*
 var error = function (err, response, body) {
     console.log('ERROR [%s]', err);
 };
-var success = function (data) {
-    //console.log('Data [%s]', data);
 
+var count = 15;
+var success = function (data) {
     var json = JSON.parse(data);
-    var result = json['statuses'][0];
-    console.log(result['user']['name']);
-    console.log(result['text']);
-    console.log(result['created_at']);
+    for (var i = 0; i < count; i++) {
+        var result = json['statuses'][i];
+        console.log(result['user']['name']);
+        console.log(result['text']);
+        console.log(result['created_at']);
+    }
 };
 
 var twitter = new Twitter(config);
-twitter.getSearch({'q':'#haiku','count': 1}, error, success);
-/* twitter api end */
+twitter.getSearch({'q':'多摩川小学校', 'result_type':'mixed', 'count':count }, error, success);
+*/
 
 // データファイルの読み込み
 var logs = [];
@@ -87,12 +90,30 @@ function procAPI(x, res) {
                     if(err) { console.log(err); }
                 });
         res.write("{'result':'ok'}");
+        res.end();
     } else if (q.mode == "show") {
-        var o = {};
-        o.result = "ok";
-        o.items = logs;
-        res.write(JSON.stringify(o));
+        //https://twitter.com/search?src=typd&q=多摩川小学校
+        twitter.getSearch({'q': q.msg, 'count': 10},
+                function (err, response, body) {
+                    console.log('ERROR [%s]', err)
+                        var o = {};
+                    o.result = "err";
+                    res.write(JSON.stringify(o));
+                    res.end();
+                },
+                function (data) {
+                    var json = JSON.parse(data);
+                    var result = json['statuses'];
+                    var tmp = []
+                    for (var i = 0; i < result.length; i++) {
+                        tmp.unshift([result[i]['user']['name'], result[i]['text']])
+                    }
+                    var o = {};
+                    o.result = "ok";
+                    o.items = tmp;
+                    res.write(JSON.stringify(o));
+                    res.end();
+                });
     }
-    res.end();
 }
 
